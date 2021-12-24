@@ -159,10 +159,12 @@
             var x = touch_end[0] - touch_start[0];
             var y = touch_end[1] - touch_start[1];
 
+            alert(x ,y);
+
             const col = [1, 3];
             const row = [2, 4];
 
-            var choose_two = (Math.abs(x) > Math.abs(y))?col:row;
+            var choose_two = (Math.abs(x) > Math.abs(y))?row:col;
             if(choose_two == [1, 3]){
                 movement((x < 0)? choose_two[0]: choose_two[1]);
             }else{
