@@ -96,7 +96,7 @@
         }
     </style>
 </head>
-<body onkeydown="keyEvents(event)" ontouchstart="touchEventS(event)" ontouchend="touchEventE(event)">
+<body onkeydown="keyEvents(event)" ontouchstart="touchEventS(event)" ontouchend="touchEventE(event)" ontouchmove="touchEventM()">
     <nav>
         <h1>消消企</h1>
         <p id="scores">分數：</p>
@@ -145,15 +145,19 @@
                         ]
 
         var touch_start;
+        var touch_end;
 
         function touchEventS(event){
             touch_start = [event.touches[0].clientX, event.touches[0].clientY];
         }
 
-        function touchEventE(event){
-            var x = event.touches[0].clientX - touch_start[0];
-            var y = event.touches[0].clientY - touch_start[1];
-            alert(x, y);
+        function touchEventM(event){
+            touch_end = [event.touches[0].clientX, event.touches[0].clientY];
+        }
+
+        function touchEventE(){
+            var x = touch_start - touch_start[0];
+            var y = touch_end - touch_start[1];
 
             const col = [1, 3];
             const row = [2, 4];
