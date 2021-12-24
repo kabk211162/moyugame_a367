@@ -156,8 +156,8 @@
         }
 
         function touchEventE(){
-            var x = touch_start - touch_start[0];
-            var y = touch_end - touch_start[1];
+            var x = touch_end[0] - touch_start[0];
+            var y = touch_end[1] - touch_start[1];
 
             const col = [1, 3];
             const row = [2, 4];
