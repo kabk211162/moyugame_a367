@@ -78,6 +78,30 @@
         img{
             width: 100%;
         }
+
+        .starter{
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 100vw;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+        .starter > h3{
+            margin: 2em auto;
+        }
+
+        .starter > p > input{
+            display: flex;
+            margin: 2em auto;
+        }
+
+        .starter > input{
+            margin: 2em;
+            height: 4em;
+            width: 6em;
+        }
+
         @media only screen and (max-width: 576px) {
             body {
                 background-size: 576px;
@@ -132,10 +156,27 @@
         </div>
     </section>
 
+    <div class="starter">
+        <h3>規則</h3>
+        <p>
+            簡單的說就是2048<br/>
+            大漢 > 魚眾 > 奇異果 > 企鵝 > 福企<br>
+            <br>
+            另外設有虎鯨，<br>
+            虎鯨食用後分數乘２<br>
+            請特別注意虎鯨是不吃大漢的哦~<br>
+            <br>
+            輸入暱稱後，開心地遊玩吧~
+            <input type="text" id="playername">
+        </p>
+        <input type="button" value="關閉" onclick="isee()">
+    </div>
+
     <script>
         var arr = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
         var score = 0;
         var hujin_position;
+        var name;
         const photo = ['<img src="https://cdn.discordapp.com/emojis/894925997961510933.png">',
                         '<img src="https://cdn.discordapp.com/emojis/737703946562437192.png">',
                         '<img src="https://cdn.discordapp.com/emojis/755796345876643880.png">',
@@ -146,6 +187,16 @@
 
         var touch_start;
         var touch_end;
+        var D = Date.now();
+
+        function isee(){
+            document.getElementsByClassName("starter")[0].style.display = "none";
+            var time = Math.round((Date.now() - D)/1000);
+            if(!document.cookie){
+                name = document.getElementById("playername").value;
+                document.cookie = `name=${name}; expires=${now}`;
+            }
+        }
 
         function touchEventS(event){
             touch_start = [event.touches[0].clientX, event.touches[0].clientY];
@@ -179,6 +230,7 @@
         function scoreCal(scores){
             score = score + scores;
             document.getElementById('scores').innerHTML = `分數： ${score}`;
+            localStorage.setItem('Score', score);
         }
 
         function drawer(){
@@ -222,6 +274,8 @@
             array_Update();
             array_Update();
             hujin_appear();
+            localStorage.setItem('array', arr);
+            localStorage.setItem('Score', 0);
         }
 
         function appear(){
@@ -245,7 +299,7 @@
             hujin_position = w;
             // console.log(hujin_position);
             arr[w[0]][w[1]] = -1;
-            
+            localStorage.setItem('hu', hujin_position);
             drawer();
         }
 
@@ -273,9 +327,10 @@
                         arr[i][which_row] = 0;
                     }
                     for(let i = 0; i < 3; i++){
-                        if(arr[i][which_row] == 0){
+                        if(arr[i][which_row] == 0 && arr[i+1][which_row] != 0){
                             arr[i][which_row] = arr[i+1][which_row];
                             arr[i+1][which_row] = 0;
+                            i = 0;
                         }
                     }
                     break;
@@ -299,9 +354,10 @@
                         arr[which_col][i] = 0;
                     }
                     for(let i = 0; i < 3; i++){
-                        if(arr[which_col][i] == 0){
+                        if(arr[which_col][i] == 0 && arr[which_col][i+1] != 0){
                             arr[which_col][i] = arr[which_col][i+1];
                             arr[which_col][i+1] = 0;
+                            i = 0;
                         }
                     }
                     break;
@@ -325,9 +381,10 @@
                         arr[i][which_row] = 0;
                     }
                     for(let i = 3; i > 0; i--){
-                        if(arr[i][which_row] == 0){
+                        if(arr[i][which_row] == 0 && arr[i-1][which_row] != 0){
                             arr[i][which_row] = arr[i-1][which_row];
                             arr[i-1][which_row] = 0;
+                            i = 3;
                         }
                     }
                     break;
@@ -351,9 +408,10 @@
                         arr[which_col][i] = 0;
                     }
                     for(let i = 3; i > 0; i--){
-                        if(arr[which_col][i] == 0){
+                        if(arr[which_col][i] == 0 && arr[which_col][i-1] != 0){
                             arr[which_col][i] = arr[which_col][i-1];
                             arr[which_col][i-1] = 0;
+                            i = 3;
                         }
                     }
                     break;
@@ -365,6 +423,7 @@
                     if(arr[i][j] == -1){
                         breaker = true;
                         hujin_position = [i, j];
+                        localStorage.setItem('hu', hujin_position);
                         break;
                     }
                 }
@@ -393,9 +452,6 @@
             
             drawer();
         }
-        array_Update();
-        array_Update();
-        hujin_appear();
 
         function movement(direct){
             let checker = false;
@@ -490,6 +546,7 @@
 
             if(checker){
                 array_Update();
+                localStorage.setItem('array', arr);
             }
         }
 
@@ -506,6 +563,26 @@
             }
         }
         // document.getElementsByTagName("body")[0].addEventListener('keydown', keyEvents());
+        
+        var now = new Date();
+        if(!document.cookie){
+            array_Update();
+            array_Update();
+            hujin_appear();
+        }else{
+            document.getElementsByClassName("starter")[0].style.display = "none";
+            name = document.cookie.split("=")[1].split(";")[0];
+            let temp = localStorage.getItem('array').split(",");
+            for(let i = 0; i < 4; i++){
+                for(let j = 0; j < 4; j++){
+                    arr[i][j] = Number(temp[4*i+j]);
+                }
+            }
+            score = Number(localStorage.getItem('Score'));
+            document.getElementById('scores').innerHTML = `分數： ${score}`;
+            hujin_position = [Number(localStorage.getItem('hu').split(",")[0]), Number(localStorage.getItem('hu').split(",")[1])];
+            drawer();
+        }
     </script>
 </body>
 </html>
